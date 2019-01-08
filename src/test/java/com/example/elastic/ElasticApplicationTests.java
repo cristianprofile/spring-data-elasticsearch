@@ -106,8 +106,6 @@ public class ElasticApplicationTests {
         Integer[] favoritNumbers = {5,55,66};
         TermsQueryBuilder termsQueryBuilder = QueryBuilders.termsQuery("favoriteNumber", favoritNumbers);
 
-
-
         SearchQuery searchQuery =
                new NativeSearchQueryBuilder().withQuery(matchAllQuery()).withFilter(termsQueryBuilder).withPageable(PageRequest.of(0, 10)).
                         build();
@@ -181,9 +179,27 @@ public class ElasticApplicationTests {
         assertThat(people1.getTotalElements()).isEqualTo(1);
         assertThat(people1.getContent().get(0).getId()).isEqualTo(person3.getId());
 
+
+        BoolQueryBuilder nameNumbeOrNameShould = new BoolQueryBuilder()
+                .should(termQuery("favoriteNumber", "544454032116122"))
+                .should(termQuery("name", "juan"));
+
+        MatchQueryBuilder favoriteColor = QueryBuilders.matchQuery("favoriteColor", ColorEnum.BLUE.toString());
+
+
+        // his favorite color   must be 'blue' color and its name must be 'juan'
+        complexQuery = new BoolQueryBuilder().must(favoriteColor).must(nameNumbeOrNameShould);
+
+        searchQuery =
+                new NativeSearchQueryBuilder().withQuery(matchAllQuery()).withFilter(complexQuery).withPageable(PageRequest.of(0, 10)).build();
+
+        people1 = elasticsearchTemplate.queryForPage(searchQuery, Person.class);
+
+
+        assertThat(people1.getTotalElements()).isEqualTo(1);
+        assertThat(people1.getContent().get(0).getId()).isEqualTo(person.getId());
+
         //TODO ADD DATE EXAMPLE
-
-
 
         personRepository.delete(person);
         personRepository.delete(person2);
