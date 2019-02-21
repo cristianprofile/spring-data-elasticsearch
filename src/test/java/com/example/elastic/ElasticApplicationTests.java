@@ -220,7 +220,6 @@ public class ElasticApplicationTests {
         count = StreamSupport.stream(people.spliterator(), false).count();
         assertThat(count).isEqualTo(0);
 
-        logger.info("Test begin process");
         logger.info("Test end process");
         assertThat(capture.toString()).contains("Test begin process");
         assertThat(capture.toString()).contains("Test end process");

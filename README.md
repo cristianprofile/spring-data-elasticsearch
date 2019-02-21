@@ -23,9 +23,10 @@ Testing create sample assert for your logtrace when a test it run
     public OutputCapture capture = new OutputCapture();
     
     
-     logger.info("Test end process");
-     assertThat(capture.toString()).contains("Test begin process");
-     assertThat(capture.toString()).contains("Test end process");
+      logger.info("Test begin process");
+      logger.info("Test end process");
+      assertThat(capture.toString()).contains("Test begin process");
+      assertThat(capture.toString()).contains("Test end process");
 
 
 
