@@ -7,10 +7,14 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.TermsQueryBuilder;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
@@ -30,6 +34,12 @@ import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ElasticApplicationTests {
+
+    @Rule
+    public OutputCapture capture = new OutputCapture();
+
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @Autowired
@@ -58,6 +68,7 @@ public class ElasticApplicationTests {
     @Test
     public void contextLoads() {
 
+        logger.info("Test begin process");
         Iterable<Person> people = personRepository.findAll();
         long total = StreamSupport.stream(people.spliterator(), false).count();
 
@@ -208,6 +219,11 @@ public class ElasticApplicationTests {
         people = personRepository.findAll();
         count = StreamSupport.stream(people.spliterator(), false).count();
         assertThat(count).isEqualTo(0);
+
+        logger.info("Test begin process");
+        logger.info("Test end process");
+        assertThat(capture.toString()).contains("Test begin process");
+        assertThat(capture.toString()).contains("Test end process");
 
     }
 
